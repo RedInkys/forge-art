@@ -1,0 +1,34 @@
+<!-- <div class="container-card">
+    <?php foreach($posts as $post): ?>
+        <?php $resultat = $pdo->query("SELECT * FROM membre WHERE id_membre = $post[id_membre]");
+    $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);?>
+    <div class="card">
+        <?php foreach($membre as $key => $value): ?>
+            <div class="container-card-img">
+                <?php if($post['mature_content'] == 'Yes'): ?>
+                    <img src="<?= $post['photo_forum'] ?>" alt="" style="filter:blur(4px);" class="cards_img">
+                    <?php else: ?>
+                        <img src="<?= $post['photo_forum'] ?>" alt="" class="cards_img">
+                        <?php endif; ?>
+            </div>
+                    <div class="card-membre">
+                        <a href="<?= URL ?>profil_share.php?id_membre=<?= $value['id_membre'] ?>"><img class="card-membre-img" src="<?= $value['photo_membre'] ?>" alt="" ></a>
+                        <a href="<?= URL ?>profil_share.php?id_membre=<?= $value['id_membre'] ?>"><h4><?= $value['pseudo'] ?></h4></a>
+                    </div>
+                    <?php endforeach; ?>
+                    
+                    <h3 class="card-title">Titre : <?= $post['titre'] ?></h3>                   
+                    <p class="tag_card">Tag : <?= $post['tag'] ?></p>
+                    <a class="a_card" href="<?= URL ?>post_share.php?id_membre=<?= $value['id_membre']?>">Voir</a>
+    </div>
+                
+                <?php endforeach;  ?>
+
+</div> -->
+
+
+
+
+            <!-- ------------------------------- Overlay ------------------------------- -->
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-500 via-gray-900/40"></div>
+            <div class="absolute inset-0 rounded-lg ring-1 ring-inset ring-gray-900/10"></div>
