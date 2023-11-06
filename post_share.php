@@ -22,7 +22,7 @@ if(isset($_SESSION) && $_SESSION)
     }
 }
 
-
+debug($post['mature_content'],1);
 ?>
 
 
@@ -31,10 +31,12 @@ if(isset($_SESSION) && $_SESSION)
 <?php require_once("inc/head.php");?>
 <section class="grid grid-cols-1 gap-8 ">
     <div class="flex justify-center items-center h-[32rem]">
-        <?php if(!internauteConnecte() || $age < 18 ): ?>
+        <?php if(!internauteConnecte() ): ?>
             <img src="<?= $post["photo_forum"] ?>" alt="<?= $membre['pseudo'] ?>" class="h-full object-cover max-w-full rounded-lg border-solid border-2 border-black blur-sm">
-            <p class="font-medium text-gray-400">Vous n'avez pas l'age requis pour voir cette image !
-                 ou vous n'etes pas <a href="<?= URL ?>connexion.php" class="bg-[#FFD6FF] rounded-md p-1 hover:text-white hover:bg-[#C8B6FF]">connecter</a>.</p>
+            <p class="font-medium text-gray-400">Vous n'etes pas <a href="<?= URL ?>connexion.php" class="bg-[#FFD6FF] rounded-md p-1 hover:text-white hover:bg-[#C8B6FF]">connecter</a>.</p>
+        <?php elseif($post['mature_content'] == "Yes" && $age < 18): ?>
+            <img src="<?= $post["photo_forum"] ?>" alt="<?= $membre['pseudo'] ?>" class="h-full object-cover max-w-full rounded-lg border-solid border-2 border-black blur-sm">
+            <p class="font-medium text-gray-400">Vous n'avez pas l'age requis pour voir cette image !</p>
         <?php else: ?>
             <img src="<?= $post["photo_forum"] ?>" alt="<?= $membre['pseudo'] ?>" class="h-full object-cover max-w-full rounded-lg border-solid border-2 border-black">
         <?php endif; ?>
