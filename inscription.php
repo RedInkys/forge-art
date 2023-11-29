@@ -45,11 +45,6 @@ if ($_POST) {
         $error .= "<p>Un compte existe déjà avec ce pseudo !</p>";
     }
 
-    if (empty($_POST['birthday']))
-    {
-        $error .="<p>Vous devez renseigner votre Date d'annniversaire</p>";
-    } 
-
         $photo_bdd = '';
         if ($_FILES['photo_membre']['name']) {
             $nom_photo = $_POST['pseudo'] . "_" . uniqid() . $_FILES['photo_membre']['name'];
@@ -122,7 +117,7 @@ if ($_POST) {
         alt="Forge-art logo"
         />
         <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Create an Account
+          Créer votre compte
         </h2>
         <p class="mt-2 text-sm leading-6 text-gray-500">
           Vous possédez déjà un compte ?
@@ -146,7 +141,7 @@ if ($_POST) {
                 <label
                         for="nom"
                         class="block text-sm font-medium leading-6 text-gray-900"
-                        >Nom  <span class="font-normal text-gray-300">* optionnel</span></label
+                        >Nom  <span class="font-normal text-gray-300">*optionnel</span></label
                         >
                       <div class="mt-2">
                         <input
@@ -161,7 +156,7 @@ if ($_POST) {
                     <div>
                       <label
                         for="prenom"
-                        class="block text-sm font-medium leading-6 text-gray-900">Prénom <span class="font-normal text-gray-300">* optionnel</span></label>
+                        class="block text-sm font-medium leading-6 text-gray-900">Prénom <span class="font-normal text-gray-300">*optionnel</span></label>
                       <div class="mt-2">
                         <input
                           id="prenom"
@@ -191,14 +186,13 @@ if ($_POST) {
                   </div>
                   <div class="">
                     <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900"
-                    >Date anniversaire</label>
+                    >Date anniversaire<span class="font-normal text-gray-300">*optionnel (si vous ne mentionnez pas votre date de naissance vous êtes considéré comme mineur)</span></label>
                     <div class="mt-2">
                       <input
                       datepicker
                       max="<?= $today ?>" min="1940-01-01"
                       type="date"
                       name="birthday"
-                      required
                       class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full py-1.5 pl-2"
                       placeholder="Birthday date"
                       />
@@ -207,7 +201,7 @@ if ($_POST) {
                   <div class="flex flex-col md:flex-row justify-between gap-4">
                     <div>
                       <label for="city" class="block text-sm font-medium leading-6 text-gray-900"
-                        >Ville <span class="font-normal text-gray-300">* optionnel</span></label
+                        >Ville <span class="font-normal text-gray-300">*optionnel</span></label
                       >
                       <div class="mt-2">
                         <input
@@ -220,7 +214,7 @@ if ($_POST) {
                     </div>
 
                     <div>
-                      <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Pays <span class="font-normal text-gray-300">* optionnel</span></label>
+                      <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Pays <span class="font-normal text-gray-300">*optionnel</span></label>
                       <div class="mt-2">
                         <input
                           id="country"
@@ -249,7 +243,7 @@ if ($_POST) {
                   </div>
                   <div>
                     <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
-                      >Mot de passe <span class="font-normal text-gray-300">* Condition (min.6, Une majuscule, un nombre, un charactere special parmis ( -+!*$@%_ ))</span></label
+                      >Mot de passe <span class="font-normal text-gray-300">*Condition (min.8, Une majuscule, un nombre, un charactere special parmis ( -+!*$@%_ ))</span></label
                     >
                     <div class="mt-2">
                       <input
@@ -265,7 +259,7 @@ if ($_POST) {
                       <label
                         for="cover-photo"
                         class="block text-sm font-medium leading-6 text-gray-900"
-                        >Photo de profil <span class="font-normal text-gray-300">* optionnel</span></label
+                        >Photo de profil <span class="font-normal text-gray-300">*optionnel</span></label
                       >
                       <div
                         class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
@@ -283,12 +277,12 @@ if ($_POST) {
                               clip-rule="evenodd"
                             />
                           </svg>
-                          <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                          <div class="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                             <label
                               for="file-upload"
                               class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                             >
-                              <span>Upload a file</span>
+                              <span class="">Telecharger un fichier</span>
                               <input
                                 id="file-upload"
                                 name="photo_membre"
@@ -296,9 +290,8 @@ if ($_POST) {
                                 class="sr-only"
                               />
                             </label>
-                            <p class="pl-1">or drag and drop</p>
                           </div>
-                          <p class="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
+                          <p class="text-xs leading-5 text-gray-600">PNG, JPEG, JPG jusqu'a 2,5 megaoctets</p>
                         </div>
                       </div>
                     </div>
@@ -309,7 +302,7 @@ if ($_POST) {
                       type="submit"
                       value="Envoyer"
                       class="flex w-full justify-center rounded-md bg-[#C8B6FF] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8B6FF]">
-                      Create Account
+                      Créer votre compte
                     </button>
                   </div>
                 </div>

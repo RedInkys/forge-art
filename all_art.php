@@ -2,12 +2,13 @@
 
 
 <?php
-$resultat = $pdo->query("SELECT DISTINCT tag FROM forum ORDER BY tag ASC");
-$tags = $resultat->fetchAll(PDO::FETCH_ASSOC);
+$resultat = $pdo->query("SELECT * FROM etiquette ORDER BY libelle ASC");
+$etiquettes = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
-if(isset($_GET['tag']))
+if(isset($_GET['etiquette']))
 {
-$resultat = $pdo->query("SELECT * FROM forum WHERE tag='$_GET[tag]'");
+$resultat = $pdo->query("SELECT forum.* FROM forum JOIN forum_etiquette ON forum.id_reference = forum_etiquette.id_forum
+WHERE forum_etiquette.id_etiquette = $_GET[etiquette]");
 
 }else{
     $resultat = $pdo->query("SELECT * FROM forum");
@@ -16,13 +17,13 @@ $resultat = $pdo->query("SELECT * FROM forum WHERE tag='$_GET[tag]'");
 $posts = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
 
-if(isset($_GET['tag']) && $_GET['tag'] === "All")
+if(isset($_GET['etiquette']) && $_GET['etiquette'] === "All")
 {
   header("location:all_art.php");
 }
 
 
-
+// debug($posts,2);
 
 ?>
 
@@ -36,12 +37,12 @@ if(isset($_GET['tag']) && $_GET['tag'] === "All")
           <form method="get">
           <select
             id="tag"
-            name="tag"
+            name="etiquette"
             class="block w-full rounded-md border-2 p-2 border-[#C8B6FF] focus:border-indigo-500 focus:ring-indigo-500"
           >
             <option><a href="all_art.php">All</a></option>
-            <?php foreach($tags as $tag): ?>
-              <option value="<?= $tag['tag'] ?>"><a href="?tag=<?= $tag['tag'] ?>"><?= $tag['tag'] ?></a></option>
+            <?php foreach($etiquettes as $etiquette): ?>
+              <option value="<?= $etiquette['id'] ?>"><a href="?etiquette=<?= $etiquette['id'] ?>"><?= $etiquette['libelle'] ?></a></option>
               <?php endforeach; ?>
           </select>
           <input class="block w-1/4 rounded-md border-2 p-2 bg-[#C8B6FF] focus:ring-indigo-500" type="submit" value="Filtrer">
@@ -55,11 +56,11 @@ if(isset($_GET['tag']) && $_GET['tag'] === "All")
               class="text-gray-500 hover:bg-[#C8B6FF] hover:text-white rounded-md px-3 py-2 text-sm font-medium"
               >All</a
             >
-            <?php foreach($tags as $tag): ?>
+            <?php foreach($etiquettes as $etiquette): ?>
             <a
-              href="?tag=<?= $tag['tag'] ?>"
+              href="?etiquette=<?= $etiquette['id'] ?>"
               class="text-gray-500 hover:bg-[#C8B6FF] hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-              ><?= $tag['tag'] ?></a
+              ><?= $etiquette['libelle'] ?></a
             >
             <?php endforeach; ?>
           </nav>
@@ -69,7 +70,12 @@ if(isset($_GET['tag']) && $_GET['tag'] === "All")
 
           <?php foreach($posts as $post): ?>
           <?php $resultat = $pdo->query("SELECT * FROM membre WHERE id_membre = $post[id_membre]");
-            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);?>
+            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);
+            $resultat2 = $pdo->query("SELECT etiquette.*
+            FROM etiquette
+            JOIN forum_etiquette ON etiquette.id = forum_etiquette.id_etiquette
+            WHERE forum_etiquette.id_forum = $post[id_reference]");
+            $etiquettes = $resultat2->fetchAll(PDO::FETCH_ASSOC);?>
       <div class="grid gap-4 h-52">
           <!-- ------------------------------- Card #1 ------------------------------- -->
         <div class="relative overflow-hidden rounded-lg">
@@ -80,9 +86,11 @@ if(isset($_GET['tag']) && $_GET['tag'] === "All")
 
             <!-- -------------------------------- Badge -------------------------------- -->
             <div class="absolute right-1.5 top-1.5 z-20">
+            <?php foreach($etiquettes as $etiquette): ?>
               <span
                 class="inline-flex items-center rounded-md bg-[#FFD6FF] px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10"
-                ><?= $post['tag'] ?></span>
+                ><?= $etiquette['libelle'] ?></span>
+              <?php endforeach; ?>
             </div>
                 <?php if($post['mature_content'] == 'Yes'): ?>
             <img
@@ -133,11 +141,13 @@ if(isset($_GET['tag']) && $_GET['tag'] === "All")
         </div> 
         <?php endforeach; ?>
     </div>
-    <?php endforeach; ?>        
-  </section>
-  <section>
-
-  
+    <?php endforeach; ?>      
+    <?php if(count($posts) == 0 ): ?>
+      <div class="flex flex-cols gap-4 flex-wrap justify-center col-start-1 col-end-3 md:col-end-5">
+            <p class="border-red-500 border-2 rounded-lg p-4">Il n'y a pas encore de publication, vous pouvez des maintenant en créer une avec le button ci-dessous !</p>
+            <a href="<?= URL ?>creation_post.php" class="flex w-1/2 justify-center rounded-md bg-[#C8B6FF] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8B6FF]"><Button>Créer une publication</Button></a>
+    </div>
+    <?php endif; ?>
   </section>
 
 

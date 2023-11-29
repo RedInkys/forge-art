@@ -22,7 +22,7 @@ if(isset($_SESSION) && $_SESSION)
     }
 }
 
-debug($post['mature_content'],1);
+// debug($post['mature_content'],1);
 ?>
 
 
@@ -30,7 +30,7 @@ debug($post['mature_content'],1);
 
 <?php require_once("inc/head.php");?>
 <section class="grid grid-cols-1 gap-8 ">
-    <div class="flex justify-center items-center h-[32rem]">
+    <div class="flex justify-center items-center max-h-[32rem]">
         <?php if(!internauteConnecte() ): ?>
             <img src="<?= $post["photo_forum"] ?>" alt="<?= $membre['pseudo'] ?>" class="h-full object-cover max-w-full rounded-lg border-solid border-2 border-black blur-sm">
             <p class="font-medium text-gray-400">Vous n'etes pas <a href="<?= URL ?>connexion.php" class="bg-[#FFD6FF] rounded-md p-1 hover:text-white hover:bg-[#C8B6FF]">connecter</a>.</p>

@@ -5,7 +5,7 @@
 
 
 
-$resultat = $pdo->query("SELECT * FROM forum LIMIT 3,24 ");
+$resultat = $pdo->query("SELECT * FROM forum ");
 $posts = $resultat->fetchAll(PDO::FETCH_ASSOC);
 // debug($posts,2);
 
@@ -23,7 +23,13 @@ $posts = $resultat->fetchAll(PDO::FETCH_ASSOC);
 <section class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <?php foreach($posts as $post): ?>
           <?php $resultat = $pdo->query("SELECT * FROM membre WHERE id_membre = $post[id_membre]");
-            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);?>
+            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);
+            $resultat2 = $pdo->query("SELECT etiquette.*
+            FROM etiquette
+            JOIN forum_etiquette ON etiquette.id = forum_etiquette.id_etiquette
+            WHERE forum_etiquette.id_forum = $post[id_reference]");
+            $etiquettes = $resultat2->fetchAll(PDO::FETCH_ASSOC);
+            ?>
       <div class="grid gap-4 h-52">
           <!-- ------------------------------- Card #1 ------------------------------- -->
         <div class="relative overflow-hidden rounded-lg">
@@ -34,9 +40,11 @@ $posts = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- -------------------------------- Badge -------------------------------- -->
             <div class="absolute right-1.5 top-1.5 z-20">
+              <?php foreach($etiquettes as $etiquette): ?>
               <span
                 class="inline-flex items-center rounded-md bg-[#FFD6FF] px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10"
-                ><?= $post['tag'] ?></span>
+                ><?= $etiquette['libelle'] ?></span>
+              <?php endforeach; ?>
             </div>
                 <?php if($post['mature_content'] == 'Yes'): ?>
             <img
@@ -88,8 +96,8 @@ $posts = $resultat->fetchAll(PDO::FETCH_ASSOC);
         <?php endforeach; ?>
     </div>
     <?php endforeach; ?>
-    <div class="flex items-end">
+    <!-- <div class="flex items-end">
       <a href="<?= URL ?>all_art.php" class="text-md font-semibold ">See more...</a>
-    </div>
+    </div> -->
       </section>
 <?php require_once("inc/foot.php");?>

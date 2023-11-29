@@ -26,8 +26,13 @@ count($posts);
     <?php if(count($posts) !== 0): ?>
           <?php foreach($posts as $post): ?>
           <?php $resultat = $pdo->query("SELECT * FROM membre WHERE id_membre = $post[id_membre]");
-            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);?>
-      <div class="grid gap-4 h-64">
+            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);
+            $resultat2 = $pdo->query("SELECT etiquette.*
+            FROM etiquette
+            JOIN forum_etiquette ON etiquette.id = forum_etiquette.id_etiquette
+            WHERE forum_etiquette.id_forum = $post[id_reference]");
+            $etiquettes = $resultat2->fetchAll(PDO::FETCH_ASSOC);?>
+      <div class="grid gap-4 h-52">
           <!-- ------------------------------- Card #1 ------------------------------- -->
         <div class="relative overflow-hidden rounded-lg">
               <?php foreach($membre as $key => $value): ?>
@@ -37,19 +42,21 @@ count($posts);
 
             <!-- -------------------------------- Badge -------------------------------- -->
             <div class="absolute right-1.5 top-1.5 z-20">
+            <?php foreach($etiquettes as $etiquette): ?>
               <span
                 class="inline-flex items-center rounded-md bg-[#FFD6FF] px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10"
-                ><?= $post['tag'] ?></span>
+                ><?= $etiquette['libelle'] ?></span>
+              <?php endforeach; ?>
             </div>
                 <?php if($post['mature_content'] == 'Yes'): ?>
             <img
-              class="h-auto w-full rounded-lg blur-sm"
+              class="h-auto w-full rounded-lg blur-sm object-cover"
               src="<?= $post['photo_forum'] ?>"
               alt="<?= $value['pseudo'] ?> post"
             > 
             <?php else: ?>
             <img
-              class="h-auto w-full rounded-lg"
+              class="h-auto w-full rounded-lg object-cover"
               src="<?= $post['photo_forum'] ?>"
               alt="<?= $value['pseudo'] ?> post"
             />
@@ -103,8 +110,8 @@ count($posts);
 </section>
 <?php else: ?>
     <div class="flex flex-cols gap-4 flex-wrap justify-center col-start-1 col-end-3 md:col-end-4">
-            <p class="border-red-500 border-2 rounded-lg p-4">Vous n'avez pas encore de post, vous pouvez des maintenant en creer un avec le button en-dessous !</p>
-            <a href="<?= URL ?>creation_post.php" class="flex w-1/2 justify-center rounded-md bg-[#C8B6FF] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8B6FF]"><Button>Creer un post</Button></a>
+            <p class="border-red-500 border-2 rounded-lg p-4">Vous n'avez pas encore de publication, vous pouvez des maintenant en créer une avec le button en-dessous !</p>
+            <a href="<?= URL ?>creation_post.php" class="flex w-1/2 justify-center rounded-md bg-[#C8B6FF] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8B6FF]"><Button>Créer ta publication</Button></a>
     </div>
         <?php endif; ?>
 

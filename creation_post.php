@@ -12,62 +12,7 @@ if(!internauteConnecte())
 
 $error='';
 
-// if($_POST)
-// {
-//     // foreach($_POST as $key => $value)
-//     // {
-//     // echo "$key : $value <br>";
-//     // }
-//     $resultat = $pdo->query("SELECT forum.* , membre.* FROM forum , membre");
-//     $forum = $resultat->fetch(PDO::FETCH_ASSOC);
-//     // debug($forum,2);
-//     $photo_bdd = '';
-//         if($_FILES['photo_membre_post']['name'])
-//         {
-//             $nom_photo = $_SESSION['membre']['pseudo'] ."_". uniqid(). $_FILES['photo_membre_post']['name']."_".$_POST['id_post'];
-//             $photo_bdd .= URL . "photo_post/$nom_photo";
-//             $photo_dossier = RACINE_SITE . "photo_post/$nom_photo";
-//             copy($_FILES['photo_membre_post']['tmp_name'],$photo_dossier);
-//         }
 
-//         if(strlen($_POST['titre']) < 3 || strlen($_POST['titre']) > 30)
-//         {
-//             $error .= "<p>Votre titre doit etre contenu entre 3 et 30 Caracteres</p>";
-//         }
-
-//         if(!preg_match('#^[a-zA-Z0-9 ._-]+$#', $_POST['titre']))
-//         {
-//             $error .= "<p>Votre titre doit contenir que des LETTRES et des NOMBRES/CHIFFRES !</p>";
-//         }
-
-//         if(strlen($_POST['description']) > 300)
-//         {
-//             $error .="<p>Votre description doit etre INFERIEUR a 300 caracteres !</p>";
-//         }
-        
-//         $id_membre = $_SESSION["membre"]['id_membre'];
-//         if(!$error)
-//         {
-//             $pdo->exec("INSERT INTO forum (titre , description, tag, photo_forum, mature_content, date_creation, id_membre)
-//              VALUES ('$_POST[titre]','$_POST[description]','$_POST[tag]', '$photo_bdd', '$_POST[mature_content]' , NOW() , '$id_membre' ) ");
-
-//             header('location:'.URL.'your_art.php');
-//             exit();
-//         } 
-        
-//         // $tag = $pdo->query("SELECT tag FROM forum");
-//         // $mature = $pdo->query("SELECT mature_content FROM forum");
-        
-//         // debug($pseudo);
-//     }
-    
-
-//     $resultat = $pdo->query("SELECT * FROM forum");
-//     $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
-// // debug($post,2);
-
-// ?>
-<?php
 if ($_POST) 
 {
     $resultat = $pdo->query("SELECT forum.*, membre.* FROM forum, membre");
@@ -83,13 +28,13 @@ if ($_POST)
         copy($_FILES['photo_membre_post']['tmp_name'], $photo_dossier);
     }
 
-    if($_FILES['photo_membre_post']['size'] > 10000000 )
+    if($_FILES['photo_membre_post']['size'] > 2621440 )
     {
-      $error .= "<p>Votre photo doit faire moins de 10mb !</p>";
+      $error .= "<p>Votre photo doit faire maximum 2,5 megaoctets !</p>";
     }
         
-        if(!empty($photo_bdd))
-        {
+    if(!empty($photo_bdd))
+    {
           if(!($_FILES["photo_membre_post"]["type"] == "image/png") 
           && !($_FILES["photo_membre_post"]["type"] == "image/jpeg") // La convention est "jpeg" pour les fichiers JPEG
           && !($_FILES["photo_membre_post"]["type"] == "image/jpg")) 
@@ -100,7 +45,6 @@ if ($_POST)
 
     $titre = htmlspecialchars($_POST['titre']);
     $description = htmlspecialchars($_POST['description']);
-    $tag = htmlspecialchars($_POST['tag']);
     $mature_content = htmlspecialchars($_POST['mature_content']);
     $id_membre = htmlspecialchars($_SESSION["membre"]['id_membre']);
 
@@ -116,28 +60,54 @@ if ($_POST)
         $error .= "<p>Votre description doit être INFÉRIEURE à 162 caractères !</p>";
     }
 
+    if(empty($_POST['etiquette']))
+    {
+      $error .= "<p>Vous devez mettre au moins 1 étiquette !</p>";
+    }
+
+    if(isset($_POST["etiquette"]) && !empty($_POST["etiquette"]))
+    {
+      if(count($_POST["etiquette"]) > 3)
+      {
+        $error .= "<p>Vous ne pouvez mettre que 3 étiquettes maximum !</p>";
+      }
+    }
+
     if (!$error) {
         $stmt = $pdo->prepare("INSERT INTO forum 
-        (titre, description, tag, photo_forum, mature_content, date_creation, id_membre)
-         VALUES (:titre, :description, :tag, :photo_bdd, :mature_content, NOW(), :id_membre)");
+        (titre, description, photo_forum, mature_content, date_creation, id_membre)
+         VALUES (:titre, :description, :photo_bdd, :mature_content, NOW(), :id_membre)");
 
         $stmt->bindParam(":titre", $titre);
         $stmt->bindParam(":description", $description);
-        $stmt->bindParam(":tag", $tag);
         $stmt->bindParam(":photo_bdd", $photo_bdd);
         $stmt->bindParam(":mature_content", $mature_content);
         $stmt->bindParam(":id_membre", $id_membre);
 
-        $stmt->execute();
+        $stmt->execute();  
+
+        $lastForumId = $pdo->lastInsertId();
+
+        foreach($_POST['etiquette'] as $etiquette)
+        {
+          $stmt = $pdo->prepare('INSERT INTO forum_etiquette (id_forum, id_etiquette) VALUES (:id_forum, :id_etiquette)');
+          $stmt->bindParam(':id_forum', $lastForumId);
+          $stmt->bindParam(':id_etiquette', $etiquette);
+
+          $stmt->execute();
+        }
 
         header('location:' . URL . 'your_art.php');
         exit();
     }
 }
 
+// debug($_FILES,2);
+
 $resultat = $pdo->query("SELECT * FROM forum");
 $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
-
+$resultat2 = $pdo->query("SELECT * FROM etiquette");
+$etiquettes = $resultat2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -149,11 +119,11 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
         >
           <div class="mx-auto w-full max-w-sm lg:w-96">
             <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Creer un post
+              Créer une publication
             </h2>
             <div class="mt-10">
               <?php if($error): ?>
-                <div class="bg-red-500 rounded-lg flex items-center justify-center p-2">
+                <div class="bg-red-500 text-white rounded-lg flex flex-wrap items-center justify-center p-2">
                   <?= $error ?>
                 </div>
               <?php endif; ?>
@@ -183,12 +153,12 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
                             clip-rule="evenodd"
                           />
                         </svg>
-                        <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                        <div class="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                           <label
                             for="file-upload"
                             class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                           >
-                            <span>Upload a file</span>
+                            <span>Télécharger un fichier</span>
                             <input
                               id="file-upload"
                               name="photo_membre_post"
@@ -197,9 +167,8 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
                               required
                             />
                           </label>
-                          <p class="pl-1">or drag and drop</p>
                         </div>
-                        <p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                        <p class="text-xs leading-5 text-gray-600">PNG, JPEG, JPG jusqu'a 2,5 megaoctets</p>
                       </div>
                         <input type="hidden" name="photo_actuelle" value="">
                     </div>
@@ -222,7 +191,7 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
                   <!-- -------------------------------- Tags --------------------------------- -->
 
-                  <div >
+                  <!-- <div >
                     <label for="tag" class="block text-sm font-medium leading-6 text-gray-900"
                       >Tags</label
                     >
@@ -244,7 +213,19 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
                         <option >Tuto</option>
                       </select>
                     </div>
-                  </div>
+                  </div> -->
+                  <div class="grid">               
+                    <label for="tag" class="block text-sm font-medium leading-6 text-gray-900"
+                    >Étiquette</label>
+                    <div class="grid grid-cols-3">
+                    <?php foreach($etiquettes as $etiquette): ?>
+                      <div class="">
+                        <input type="checkbox" name="etiquette[]" value="<?= $etiquette["id"] ?>">
+                        <label for="tag"><?= $etiquette["libelle"] ?></label>
+                      </div>
+                        <?php endforeach; ?>
+                      </div>
+                    </div>
 
                   <!-- ----------------------------- description ----------------------------- -->
                   <div>
@@ -268,16 +249,16 @@ $forums = $resultat->fetchAll(PDO::FETCH_ASSOC);
                   <!-- -------------------------------- Check -------------------------------- -->
                   <div >
                     <label for="mature_content" class="block text-sm font-medium leading-6 text-gray-900"
-                      >Mature content</label
+                      >Floue</label
                     >
                     <div class="mt-2">
                       <select
                         id="mature_content"
                         name="mature_content"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                        class="block min-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       >
-                        <option >Yes</option>
-                        <option >No</option>
+                        <option>Oui</option>
+                        <option>Non</option>
                       </select>
                     </div>
                     <p class="flex justify-center mt-3 text-sm leading-6 text-gray-600">

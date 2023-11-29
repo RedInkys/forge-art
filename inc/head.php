@@ -10,10 +10,12 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
   $toutLesPosts = $pdo->query('SELECT * FROM forum WHERE titre LIKE "%'.$recherche.'%"');
 } 
 
+// debug(RACINE_SITE,2);
+
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -45,28 +47,28 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                 </a>             
               </div>
               <div class="hidden lg:ml-6 lg:block">
-                <div class="flex space-x-4">
+              <div class="flex space-x-4">
                   <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                   <a
                   href="<?= URL ?>"
                     class="rounded-md capitalize px-3 py-2 text-sm font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >Home</a
+                    >Accueil</a
                   >
                   <a
                   href="<?= URL ?>all_art.php"
                     class="rounded-md capitalize px-3 py-2 text-sm font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >All Art</a
+                    >Filtre étiquette</a
                   >
                   <a
                   href="<?= URL ?>filter_az.php"
                     class="rounded-md capitalize px-3 py-2 text-sm font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >Filter</a
+                    >Filtre date</a
                   >
                   <?php if(internauteConnecte()): ?>
                   <a
                   href="<?= URL ?>your_art.php"
                     class="rounded-md capitalize px-3 py-2 text-sm font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >Your art</a
+                    >Tes publications</a
                   >
                   <?php endif ?>
                   <?php if(internauteConnecte()  && $_SESSION['membre']['role'] === "admin"): ?>
@@ -79,7 +81,7 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                   <a
                   href="<?= URL ?>propos.php"
                     class="rounded-md capitalize px-3 py-2 text-sm font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >A propos</a
+                    >À propos</a
                   >
                 </div>
               </div>
@@ -212,7 +214,7 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                     <a
                       href="<?= URL ?>creation_post.php"
                       class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                      >Create Post</a
+                      >Création publication</a
                     >
 
                     <!-- Active: "bg-gray-100", Not Active: "" -->
@@ -222,7 +224,7 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                       role="menuitem"
                       tabindex="-1"
                       id="user-menu-item-0"
-                      ><?= $_SESSION['membre']['pseudo'] ?> Profile</a
+                      >Profil de <?= $_SESSION['membre']['pseudo'] ?></a
                     >
                     <a
                     href="<?= URL ?>connexion.php?action=deconnexion"
@@ -230,7 +232,7 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                       role="menuitem"
                       tabindex="-1"
                       id="user-menu-item-2"
-                      >Sign out</a
+                      >Déconnexion</a
                     >
                   </div>
                   <?php else: ?>
@@ -283,12 +285,12 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
             <a
               href="<?= URL ?>all_art.php"
               class="block capitalize rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-              >All art</a
+              >Filtre étiquette</a
             >
             <a
                   href="<?= URL ?>filter_az.php"
                   class="block capitalize rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >Filter</a
+                    >Filtre date</a
                   >
             <?php if(internauteConnecte()): ?>
                   <a
@@ -300,7 +302,7 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
                   <a
                   href="<?= URL ?>propos.php"
                   class="block capitalize rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                    >A propos</a
+                    >À propos</a
                   >
           </div>
           <div class="border-t border-gray-200 pb-3 pt-4">
@@ -322,19 +324,19 @@ if(isset($_GET['recherche']) && !empty($_GET['recherche']))
               <a
               href="<?= URL ?>creation_post.php"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                >Create Post</a
+                >Création publication</a
               >
 
               <a
               href="<?= URL ?>profil.php"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                ><?= $_SESSION['membre']['pseudo'] ?> Profile</a
+                >Profil de <?= $_SESSION['membre']['pseudo'] ?></a
               >
 
               <a
                 href="<?= URL ?>connexion.php?action=deconnexion"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-[#C8B6FF] hover:text-white"
-                >Sign out</a
+                >Déconnexion</a
               >
             </div>
             <?php else: ?>

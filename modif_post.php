@@ -31,7 +31,7 @@ if($_POST)
     {
         if (isset($_GET['action']) && $_GET['action'] === 'modification') 
         {
-            $stmt = $pdo->exec("UPDATE forum SET titre='$_POST[titre]', description='$_POST[description]', tag='$_POST[tag]' WHERE id_reference='$_GET[id_post]' ");
+            $stmt = $pdo->exec("UPDATE forum SET titre='$_POST[titre]', description='$_POST[description]' WHERE id_reference='$_GET[id_post]' ");
             header("location:".URL."your_art.php");
         }
     }
@@ -54,9 +54,9 @@ if($_POST)
         <div class="flex flex-1 flex-col px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div class="mx-auto w-full max-w-sm lg:w-96">
             <h2 class="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Modifier le post
+              Modifier la publication
             </h2>        
-            <p>Vous pouvez que modifier le titre, le tag et la description</p>
+            <p>Vous pouvez modifier le titre et la description</p>
             <?php if($error): ?>
             <p><?= $error ?></p>
             <?php endif; ?>
@@ -82,7 +82,7 @@ if($_POST)
                   </div>
 
                   <!-- -------------------------------- Tags --------------------------------- -->
-
+<!-- 
                   <div >
                     <label for="tag" class="block text-sm font-medium leading-6 text-gray-900"
                       >Tags</label
@@ -105,7 +105,7 @@ if($_POST)
                         <option <?php if($post['tag']=="tuto") echo 'selected';?>>Tuto</option>
                       </select>
                     </div>
-                  </div>
+                  </div> -->
 
                   <!-- ----------------------------- description ----------------------------- -->
                   <div>

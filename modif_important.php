@@ -97,8 +97,8 @@ $email = (isset($profil_modification['email'])) ? $profil_modification['email']:
 <div class="bg-red-500 p-4 rounded-lg">
 <p><?= $error ?></p>
 </div>
-    <?php endif; ?>
-    <?php if($content):  ?>
+<?php endif; ?>
+<?php if($content):  ?>
 <div class="bg-emerald-500 p-4 rounded-lg">
 <p><?= $content ?> <a href="<?= URL ?>profil.php" class="text-white hover:bg-[#FFD6FF] rounded-md p-1">retour au profil</a></p>
 </div>

@@ -97,7 +97,12 @@ else{
       <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <?php foreach($posts as $post): ?>
           <?php $resultat = $pdo->query("SELECT * FROM membre WHERE id_membre = $post[id_membre]");
-            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);?>
+            $membre = $resultat->fetchAll(PDO::FETCH_ASSOC);
+            $resultat2 = $pdo->query("SELECT etiquette.*
+            FROM etiquette
+            JOIN forum_etiquette ON etiquette.id = forum_etiquette.id_etiquette
+            WHERE forum_etiquette.id_forum = $post[id_reference]");
+            $etiquettes = $resultat2->fetchAll(PDO::FETCH_ASSOC);?>
       <div class="grid gap-4 h-52">
           <!-- ------------------------------- Card #1 ------------------------------- -->
         <div class="relative overflow-hidden rounded-lg">
@@ -108,9 +113,11 @@ else{
 
             <!-- -------------------------------- Badge -------------------------------- -->
             <div class="absolute right-1.5 top-1.5 z-20">
+            <?php foreach($etiquettes as $etiquette): ?>
               <span
                 class="inline-flex items-center rounded-md bg-[#FFD6FF] px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10"
-                ><?= $post['tag'] ?></span>
+                ><?= $etiquette['libelle'] ?></span>
+              <?php endforeach; ?>
             </div>
                 <?php if($post['mature_content'] == 'Yes'): ?>
             <img
